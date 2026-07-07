@@ -197,5 +197,3 @@ The implemented solutions are documented throughout the project.
 # Documentation
 
 Complete project documentation and presentation are available in the `docs/` directory.
-
----
