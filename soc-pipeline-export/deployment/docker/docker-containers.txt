@@ -1,0 +1,10 @@
+CONTAINER ID   IMAGE                                     COMMAND                  CREATED       STATUS                   PORTS                                              NAMES
+b4ddc577dc21   ce751c0fe323                              "/bin/sh -c 'apk --n…"   2 days ago    Exited (0) 2 days ago                                                       thirsty_heisenberg
+4ff04080904b   91a20a08048d                              "/bin/sh -c 'apk --n…"   5 weeks ago   Exited (2) 5 weeks ago                                                      funny_morse
+851a84ed1e54   ghcr.io/shuffle/shuffle-frontend:latest   "/entrypoint.sh ngin…"   5 weeks ago   Up 10 days               443/tcp, 0.0.0.0:3001->80/tcp, [::]:3001->80/tcp   shuffle-frontend
+407bbbeb4d51   ghcr.io/shuffle/shuffle-orborus:latest    "./orborus"              5 weeks ago   Up 10 days                                                                  shuffle-orborus
+fb8cd26f7dcf   strangebee/thehive:5.2                    "/opt/thehive/entryp…"   5 weeks ago   Up 10 days               0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp        thehive
+5b124cfce428   ghcr.io/shuffle/shuffle-backend:latest    "./shufflebackend"       5 weeks ago   Up 10 days               0.0.0.0:5001->5001/tcp, [::]:5001->5001/tcp        shuffle-backend
+ead290c8c405   cassandra:4.0                             "docker-entrypoint.s…"   5 weeks ago   Up 10 days               7000-7001/tcp, 7199/tcp, 9042/tcp, 9160/tcp        cassandra
+0f5fffab7624   opensearchproject/opensearch:2.11.0       "./opensearch-docker…"   5 weeks ago   Up 10 days               9200/tcp, 9300/tcp, 9600/tcp, 9650/tcp             shuffle-opensearch
+ad580b341d30   tenzir/tenzir:main                        "tenzir-node '--comm…"   5 weeks ago   Up 10 days                                                                  tenzir-node

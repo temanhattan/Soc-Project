@@ -1,0 +1,137 @@
+name: soc-pipeline-export
+services:
+  cassandra:
+    container_name: cassandra
+    environment:
+      CASSANDRA_CLUSTER_NAME: TheHive
+      HEAP_NEWSIZE: 200m
+      MAX_HEAP_SIZE: 1g
+    image: cassandra:4.0
+    mem_limit: "1610612736"
+    networks:
+      soc-network: null
+    volumes:
+      - type: bind
+        source: /path/to/soc-pipeline-export/cassandra-data
+        target: /var/lib/cassandra
+        bind: {}
+  shuffle-backend:
+    container_name: shuffle-backend
+    depends_on:
+      shuffle-opensearch:
+        condition: service_started
+        required: true
+    environment:
+      SHUFFLE_OPENSEARCH_URL: http://shuffle-opensearch:9200
+    image: ghcr.io/shuffle/shuffle-backend:latest
+    mem_limit: "536870912"
+    networks:
+      shuffle-network: null
+    ports:
+      - mode: ingress
+        target: 5001
+        published: "5001"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        bind: {}
+  shuffle-frontend:
+    container_name: shuffle-frontend
+    depends_on:
+      shuffle-backend:
+        condition: service_started
+        required: true
+    environment:
+      BACKEND_HOSTNAME: shuffle-backend
+    image: ghcr.io/shuffle/shuffle-frontend:latest
+    mem_limit: "268435456"
+    networks:
+      shuffle-network: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "3001"
+        protocol: tcp
+  shuffle-opensearch:
+    container_name: shuffle-opensearch
+    environment:
+      DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+      bootstrap.memory_lock: "true"
+      discovery.type: single-node
+      plugins.security.disabled: "true"
+    image: opensearchproject/opensearch:2.11.0
+    mem_limit: "1073741824"
+    networks:
+      shuffle-network: null
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: bind
+        source: /path/to/soc-pipeline-export/shuffle-database
+        target: /usr/share/opensearch/data
+        bind: {}
+  shuffle-orborus:
+    container_name: shuffle-orborus
+    depends_on:
+      shuffle-backend:
+        condition: service_started
+        required: true
+    environment:
+      CLEANUP: "true"
+      SHUFFLE_WORKER_IMAGE: ghcr.io/shuffle/shuffle-worker:latest
+    image: ghcr.io/shuffle/shuffle-orborus:latest
+    mem_limit: "268435456"
+    networks:
+      shuffle-network: null
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        bind: {}
+  thehive:
+    command:
+      - --secret
+      - CHANGE_ME_SECRET
+      - --cql-hostnames
+      - cassandra
+      - --index-backend
+      - elasticsearch
+      - --es-hostnames
+      - shuffle-opensearch
+    container_name: thehive
+    depends_on:
+      cassandra:
+        condition: service_started
+        required: true
+      shuffle-opensearch:
+        condition: service_started
+        required: true
+    environment:
+      JAVA_OPTS: -Xms1g -Xmx1g
+    image: strangebee/thehive:5.2
+    mem_limit: "1610612736"
+    networks:
+      shuffle-network: null
+      soc-network: null
+    ports:
+      - mode: ingress
+        target: 9000
+        published: "9000"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /path/to/soc-pipeline-export/thehive-data
+        target: /opt/thp/thehive/data
+        bind: {}
+networks:
+  shuffle-network:
+    name: soc-pipeline-export_shuffle-network
+    driver: bridge
+  soc-network:
+    name: soc-pipeline-export_soc-network
+    driver: bridge

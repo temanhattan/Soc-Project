@@ -1,0 +1,6 @@
+NETWORK ID     NAME                           DRIVER    SCOPE
+adb32bc5a771   bridge                         bridge    local
+fba120444590   host                           host      local
+f49016e72f7b   none                           null      local
+c790144e3593   soc-pipeline_shuffle-network   bridge    local
+ede9b6a74b6c   soc-pipeline_soc-network       bridge    local

@@ -1,0 +1,109 @@
+services:
+  # --- SHUFFLE SOAR ENGINE ---
+  shuffle-opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: shuffle-opensearch
+    environment:
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true
+      - plugins.security.disabled=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./shuffle-database:/usr/share/opensearch/data
+    mem_limit: 1g
+    networks:
+      - shuffle-network
+
+  shuffle-backend:
+    image: ghcr.io/shuffle/shuffle-backend:latest
+    container_name: shuffle-backend
+    ports:
+      - "5001:5001"
+    environment:
+      - SHUFFLE_OPENSEARCH_URL=http://shuffle-opensearch:9200
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    mem_limit: 512m
+    depends_on:
+      - shuffle-opensearch
+    networks:
+      - shuffle-network
+
+  shuffle-frontend:
+    image: ghcr.io/shuffle/shuffle-frontend:latest
+    container_name: shuffle-frontend
+    ports:
+      - "3001:80"
+    environment:
+      - BACKEND_HOSTNAME=shuffle-backend
+    mem_limit: 256m
+    depends_on:
+      - shuffle-backend
+    networks:
+      - shuffle-network
+
+  shuffle-orborus:
+    image: ghcr.io/shuffle/shuffle-orborus:latest
+    container_name: shuffle-orborus
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - SHUFFLE_WORKER_IMAGE=ghcr.io/shuffle/shuffle-worker:latest
+      - CLEANUP=true
+    mem_limit: 256m
+    depends_on:
+      - shuffle-backend
+    networks:
+      - shuffle-network
+
+
+  # --- THEHIVE CASE MANAGEMENT ---
+  cassandra:
+    image: cassandra:4.0
+    container_name: cassandra
+    environment:
+      - MAX_HEAP_SIZE=1g
+      - HEAP_NEWSIZE=200m
+      - CASSANDRA_CLUSTER_NAME=TheHive
+    volumes:
+      - ./cassandra-data:/var/lib/cassandra
+    mem_limit: 1.5g
+    networks:
+      - soc-network
+
+  thehive:
+    image: strangebee/thehive:5.2
+    container_name: thehive
+    environment:
+      - "JAVA_OPTS=-Xms1g -Xmx1g"
+    volumes:
+      - ./thehive-data:/opt/thp/thehive/data
+    ports:
+      - "9000:9000"
+    command:
+      - --secret
+      - "CHANGE_ME_SECRET"
+      - "--cql-hostnames"
+      - "cassandra"
+      - "--index-backend"
+      - "elasticsearch"
+      - "--es-hostnames"
+      - "shuffle-opensearch"
+    mem_limit: 1.5g
+    depends_on:
+      - cassandra
+      - shuffle-opensearch
+    networks:
+      - soc-network
+      - shuffle-network
+
+networks:
+  soc-network:
+    driver: bridge
+  shuffle-network:
+    driver: bridge

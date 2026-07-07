@@ -1,0 +1,43 @@
+#!/var/ossec/framework/python/bin/python3
+import sys
+import json
+import requests
+import time
+
+# 1. Read the alert data Wazuh provides
+# Using 'with open' automatically handles closing the file safely
+try:
+    with open(sys.argv[1], 'r') as alert_file:
+        alert_data = json.load(alert_file)
+except Exception as e:
+    # If the file can't be read, exit silently so Wazuh can move on
+    sys.exit(1)
+
+# 2. Grab the webhook URL from the ossec.conf file
+# (This ensures it pulls http://<SHUFFLE_IP>:3001 exactly as you configured it)
+webhook_url = sys.argv[3]
+
+# 3. Fault-Tolerant Sending Mechanism (Exponential Backoff)
+max_retries = 3
+timeout_seconds = 5
+
+for attempt in range(max_retries):
+    try:
+        # Send the JSON to Shuffle
+        # Using 'json=alert_data' natively handles the escaping of backslashes (like C:\Windows\...)
+        response = requests.post(webhook_url, json=alert_data, timeout=timeout_seconds)
+        
+        # If successful (HTTP 200, 201, etc.), exit script with 0 (Success)
+        if response.status_code in [200, 201, 202, 204]:
+            sys.exit(0)
+            
+    except requests.exceptions.RequestException as e:
+        # This catches Connection Errors, Timeouts, and Shuffle being temporarily offline
+        pass
+        
+    # If the request failed, wait before retrying.
+    # Attempt 0: waits 2 seconds. Attempt 1: waits 4 seconds. Attempt 2: waits 8 seconds.
+    time.sleep(2 ** (attempt + 1))
+
+# If all 3 retries fail, exit with error code 1 so Wazuh logs the failure in ossec.log
+sys.exit(1)

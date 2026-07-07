@@ -1,0 +1,61 @@
+[
+    {
+        "Name": "soc-pipeline_soc-network",
+        "Id": "ede9b6a74b6ca7f667f892ca9b7036f488e16c600eb165799a800a4ee6c33978",
+        "Created": "2026-05-30T22:59:22.791160248Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "f08179262c58c7f63ee285ef3b7da45cf4c98b53d117d634b6fc96177833c58f",
+            "com.docker.compose.network": "soc-network",
+            "com.docker.compose.project": "soc-pipeline",
+            "com.docker.compose.version": "5.1.4"
+        },
+        "Containers": {
+            "ead290c8c405ab558fbeb4ba9f7e2e97651d2c0790bc4885f23df8f770ea9bf7": {
+                "Name": "cassandra",
+                "EndpointID": "2aab84000319bca6f7f482d10f07956290605fba51812f42c4e6b4a448534ad8",
+                "MacAddress": "32:cc:40:90:99:5f",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "fb8cd26f7dcf15a90e3bee54fccf2d6dc5bd55dda983ce487aa9607db448d00d": {
+                "Name": "thehive",
+                "EndpointID": "c720a1108e757023d75197354fc55f758d69d5caeecef766829cad6b124f9584",
+                "MacAddress": "3e:e6:2e:ae:5b:69",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 65531
+                    }
+                }
+            }
+        }
+    }
+]

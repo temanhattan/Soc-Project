@@ -1,0 +1,82 @@
+[
+    {
+        "Name": "soc-pipeline_shuffle-network",
+        "Id": "c790144e359327a364f5199a2673ec3a0d572f28874364c47547edfbee48f24d",
+        "Created": "2026-05-30T22:59:22.471682746Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "7dc400ff76d3cb39334f0aa09baeebbbbff40076e5cf4cbc225e348e1a49d3de",
+            "com.docker.compose.network": "shuffle-network",
+            "com.docker.compose.project": "soc-pipeline",
+            "com.docker.compose.version": "5.1.4"
+        },
+        "Containers": {
+            "0f5fffab7624593de75e8ed476e1e457e5b8f0d30ed2e5df9e050f8c6638ff21": {
+                "Name": "shuffle-opensearch",
+                "EndpointID": "f3a64b153fa9f32380a1a2a8248fd4c5c3e4461124fb51bade7c1226033ae440",
+                "MacAddress": "92:4d:b5:ba:66:bf",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "407bbbeb4d5127565645675470826881da8c0fe8070e75b0002e64d165198e16": {
+                "Name": "shuffle-orborus",
+                "EndpointID": "d526674bea8247048f409c24a886dbc4f42e6d5b54510763311b051ca5ba2a83",
+                "MacAddress": "82:72:90:9c:ed:0b",
+                "IPv4Address": "172.18.0.5/16",
+                "IPv6Address": ""
+            },
+            "5b124cfce428b090e9c5430ad9366068ba49d1bddce993392b37f1826256b392": {
+                "Name": "shuffle-backend",
+                "EndpointID": "2fdd23b1f923e39bc229e747dd79079fd2abafdc850fd235dd34e91b56c1b8b8",
+                "MacAddress": "16:bb:d4:84:31:ac",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            },
+            "851a84ed1e54471d33b2692e1712e20436e10b6b604384d83da8c2baa8f9f657": {
+                "Name": "shuffle-frontend",
+                "EndpointID": "fc302db7c29f649ef8d81914706eb0736b9413826a67fc75caac83a778207c31",
+                "MacAddress": "e2:d1:53:ab:a6:c5",
+                "IPv4Address": "172.18.0.6/16",
+                "IPv6Address": ""
+            },
+            "fb8cd26f7dcf15a90e3bee54fccf2d6dc5bd55dda983ce487aa9607db448d00d": {
+                "Name": "thehive",
+                "EndpointID": "5b1662743d897199254558b775d46825e7053b0793f655294ab0c86f749917f7",
+                "MacAddress": "da:9e:00:fc:11:f8",
+                "IPv4Address": "172.18.0.4/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.18.0.0/16": {
+                        "IPsInUse": 8,
+                        "DynamicIPsAvailable": 65528
+                    }
+                }
+            }
+        }
+    }
+]
